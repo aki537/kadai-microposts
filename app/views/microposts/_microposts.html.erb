@@ -9,9 +9,20 @@
         <div>
           <p><%= micropost.content %></p>
         </div>
-        <div>
+        <div class="form-inline">
           <% if current_user == micropost.user %>
-            <%= link_to "Delete", micropost, method: :delete, data: { confirm: "You sure?" }, class: 'btn btn-danger btn-sm' %>
+            <%= link_to "Delete", micropost, method: :delete, data: { confirm: "You sure?" }, class: 'btn btn-danger btn-sm mr-3' %>
+          <% end %>
+          <% if current_user.likepost?(micropost) %>
+            <%= form_with(model: current_user.favorites.find_by(micropost_id: micropost.id), local: true, method: :delete) do |f| %>
+              <%= hidden_field_tag :micropost_id, micropost.id %>
+              <%= f.submit 'Unlike', class: :'btn btn-danger btn-sm' %>
+            <% end %>
+          <% else %>
+            <%= form_with(model: current_user.favorites.build, local: true) do |f| %>
+              <%= hidden_field_tag :micropost_id, micropost.id %>
+              <%= f.submit 'Like', class: 'btn btn-primary btn-sm' %>
+            <% end %>
           <% end %>
         </div>
       </div>
